@@ -27,7 +27,7 @@ fetch() {
 }
 
 checkEarliestDate() {
-    newEarliest=$(jq -r '.schedules | map(select(.slots != [])) | .[0].date' < $EARLIEST_PATH)
+    newEarliest=$(jq -r '.schedules | map(select(.slots != [])) | .[0].date' < $SLOTS_PATH)
     #log "Last Earliest: $startEarliest || New Earliest: $newEarliest"
     if [[ "$startEarliest" > "$newEarliest" ]]; then
         echo "$newEarliest" | tee "$EARLIEST_PATH"
@@ -70,13 +70,12 @@ EOF
              "https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages" \
              -u "${sid}:${token}" && log "Sent to $recipient"
     done <<< "$(recipients)"
-    exit 0
 }
 
+echo "Beginning Run @ $(date)"
 while IFS= read -r line; do
     name="$(echo "$line" | cut -f1)"
     locationId=$(echo "$line" | cut -f2)
     log "$name @ $locationId"
-    fetch "$locationId"
-    checkEarliestDate && alertNewDate "$name" || echo "No new appointments found at $name"
+    fetch "$locationId" && checkEarliestDate && alertNewDate "$name" && say "Found New COVID Appt" && exit 0 || echo "No new appointments found at $name"
 done <<< "$(locations)"
