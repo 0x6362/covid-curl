@@ -1,0 +1,7 @@
+{
+  "sid": "foobar",
+  "secret": "baz",
+  "recipients": ["+15556865309"],
+  "from": "+15556865309",
+  "locations": {"Hyannis": "530177ae-e1c1-4686-988e-61b49469a653", "Mashpee": "342def52-b45e-4b7e-85b8-84d13e0229d3"}
+}
